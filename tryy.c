@@ -152,16 +152,82 @@ int avancerJoueur(char plateau[], int positions[], int attente[],int joueur_cour
       }
 
     }
+  }
+}
+
+void conversion(int pos, int* x, int* y) {
+  ;
+
+
+
+
+
 }
 
 
+void afficherPlateau(int plateau[], int positions[], int nb_joueurs){
+  ;
+
+
+
+
 }
+
+
 
 int main(){
     char plateau[TAILLE_PLAT];
     creer_plateau(plateau);
+    int nb_joueurs;
+    int des[2];
+    int positions[nb_joueurs];
+    int attente[nb_joueurs];
+    printf("Combien de joueurs ? ");
+    scanf("%d", &nb_joueurs);
+    while (nb_joueurs < 2 || nb_joueurs > 4)
+    {
+      printf("Le nombre de joueurs est entre 2 et 4 ");
+      scanf("%d", &nb_joueurs);
+    }
+    for (int i = 0; i<nb_joueurs ; i++){ // intializa tab positions[] et attente[]
+      positions[i] = 0;
+      attente[i]   = 0;
+    }
+
+    printf("%d\n", nb_joueurs);
+    printf("Pour chaque tour, indiquer les valeurs des deux des ou taper q pour quitter\n"); 
+    des[0] = 1;
+    while ((des[0] ) != 'q'){
+      int premier_tour = 1;
+      int joueur_courant;      
+      for ( joueur_courant = 1; joueur_courant <= nb_joueurs; joueur_courant++){
+          printf("Joueur %d: ", joueur_courant );
+          scanf("%d ", des);
+          if (des[0] =='q'){
+            printf("arret");
+            break;
+          } 
+           while (des[0] < 1 || des[0] > 6)
+          {
+            printf("la valeur du des est entre 1 et 6 ");
+            scanf("%d", des);
+          }
+          scanf("%d", des + 1);
+           while (des[1] < 1 || des[1] > 6)
+          {
+            printf("la valeur du des est entre 1 et 6 ");
+            scanf("%d", des + 1);
+          }          
+          printf("%d %d", des[0], des[1]);
+          avancerJoueur(plateau, positions, attente, joueur_courant, nb_joueurs, des, premier_tour);
+          //afficherPlateau( plateau, positions, nb joueurs)
+          }
+    
+      premier_tour = 0;
 
 
+    }
+  
 
     return 0;
 }
