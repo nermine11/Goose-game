@@ -6,7 +6,10 @@
 void creer_plateau(char plateau[TAILLE_PLAT]){ //pour creer le plateau au debut de la partie
     for(int i = 0;i < TAILLE_PLAT; i++){
       plateau[i] = ' ';
-      if(!(i%9)){plateau[i] = 'O';}
+      if(!(i%9))
+      {
+        plateau[i] = 'O';
+      }
     }
     plateau[0] = ' ';
     plateau[53] = 'T';
@@ -14,7 +17,8 @@ void creer_plateau(char plateau[TAILLE_PLAT]){ //pour creer le plateau au debut 
     plateau[74] = 'P';
     plateau[31] = 'H';
     plateau[65] = 'L';
-    plateau[94] = 'X';    
+    plateau[94] = 'X';  
+    plateau[99] = ' ' ;
     }
 
 int recherche_element(int valeur, int tab[]) {
