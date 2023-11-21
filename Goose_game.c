@@ -171,9 +171,25 @@ int avancerJoueur(char plateau[], int positions[], int attente[], int joueur_cou
   return -1;
 }
 
-void conversion(int pos, int *x, int *y)
-{
-  ;
+void conversion(int pos, int* x, int* y) {
+  if(pos < 10){*x = pos;*y=0;pos=100;}
+  if(pos < 19){*x=9;*y=pos-9;pos=100;}
+  if(pos < 28){*x=27-pos;*y=9;pos=100;}
+  if(pos < 36){*x=0;*y=36-pos;pos=100;}
+  if(pos < 44){*x=pos-35;*y=1;pos=100;}
+  if(pos < 51){*x=8;*y=pos-42;pos=100;}
+  if(pos < 58){*x=58-pos;*y=8;pos=100;}
+  if(pos < 64){*x=1;*y=65-pos;pos=100;}
+  if(pos < 70){*x=pos-62;*y=2;pos=100;}
+  if(pos < 75){*x=7;*y=pos-67;pos=100;}
+  if(pos < 80){*x=81-pos;*y=7;pos=100;}
+  if(pos < 84){;}
+
+//je continueplus tard
+
+
+
+
 }
 
 void afficherPlateau(int plateau[], int positions[], int nb_joueurs)
