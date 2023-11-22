@@ -129,21 +129,18 @@ int avancerJoueur(char plateau[], int positions[], int attente[], int joueur_cou
   if(attente[joueur_courant]){attente[joueur_courant]-=1;}
   if (!attente[joueur_courant - 1])
   {
-    int nouvelle_pos;
+    int nouvelle_pos = positions[joueur_courant - 1] + des[0] + des[1];
     int cas_spes = 0;
     if (premier_tour){
     {
       if ((des[0] == 4 && des[1] == 5) || (des[1] == 4 && des[0] == 5)) // cas special 4,5
-        nouvelle_pos = 89;cas_spes=1;}
+        nouvelle_pos = 89;cas_spes=1;positions[joueur_courant - 1] = nouvelle_pos;}
       if ((des[0] == 3 && des[1] == 6) || (des[1] == 3 && des[0] == 6)){ // cas special 3,6
-        nouvelle_pos = 40;cas_spes=1;}
-      collision(plateau, positions, attente, nb_joueurs, joueur_courant, nouvelle_pos, des);
-      positions[joueur_courant - 1] = nouvelle_pos;
+        nouvelle_pos = 40;cas_spes=1;positions[joueur_courant - 1] = nouvelle_pos;}
+      if(cas_spes){collision(plateau, positions, attente, nb_joueurs, joueur_courant, nouvelle_pos, des);}
     }
     if(!cas_spes)
     {
-      nouvelle_pos = positions[joueur_courant - 1] + des[0] + des[1];
-      printf("nouvellepos : %d\n",nouvelle_pos);
       if (nouvelle_pos > 99) // si on depase 100
         nouvelle_pos = 99 - nouvelle_pos % 99;
       collision(plateau, positions, attente, nb_joueurs, joueur_courant, nouvelle_pos, des);
@@ -317,9 +314,9 @@ int main()
 
 
   // debut du jeu
+  int premier_tour = 1;
   while (1)
   {
-    int premier_tour = 1;
     int joueur_courant;
     for (joueur_courant = 1; joueur_courant <= nb_joueurs; joueur_courant++)
     {
@@ -342,7 +339,6 @@ int main()
       fprintf(fileW, "%d %d\n", des[0], des[1]);
       avancerJoueur(plateau, positions, attente, joueur_courant, nb_joueurs, des, premier_tour);
       afficherPlateau( plateau, positions, nb_joueurs,joueur_courant);
-      printf("positions : %d   %d",positions[0],positions[1]);
     }
 
     premier_tour = 0;
@@ -350,3 +346,6 @@ int main()
   fclose(fileW);
   return 0;
 }
+// le O a la fin
+//pb colision
+//pb position depase 100
