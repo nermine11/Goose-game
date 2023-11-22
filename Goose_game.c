@@ -96,8 +96,8 @@ void appliquer_effet_cases(char plateau[], int positions[], int nb_joueurs, int 
 void collision(char plateau[], int positions[], int attente[], int nb_joueurs,
                int joueur_courant, int nouvelle_pos, int des[2])
 {
-  // la fonction prend positions,attente qui n'a pas encore changé et
-  // ne change pas la position de joueur courant a nouvelle_pos
+  /* la fonction prend positions,attente qui n'a pas encore changé et
+   ne change pas la position de joueur courant a nouvelle_pos */
 
   if (plateau[nouvelle_pos] != 'P' && plateau[nouvelle_pos] != 'T')
   {
@@ -187,49 +187,46 @@ void conversion(int pos, int* x, int* y) {
 
 //je continueplus tard
 
-
-
-
 }
+
 
 void afficherPlateau(int plateau[], int positions[], int nb_joueurs)
 {
   ;
 }
 
-// Fonction pour sauvegarder le jeu
-void save_game(char *filename, int nb_joueurs, int des[2])
-{
-  FILE *file = fopen(filename, "a");
-
-  if (file == NULL)
-  {
-    printf("Erreur: %s\n", filename);
-    exit(1);
-  }
-
-  // sauvegarder le jeu dans le fichier
-  fprintf(file, "%d JO\n", nb_joueurs);
-  fprintf(file, "%d %d\n", des[0], des[1]);
-
-  fclose(file);
-}
 
 // Fonction pour charger le jeu
 void charger_fichier(char *filename, int *nb_joueurs, int des[2])
 {
-  FILE *file = fopen(filename, "r");
+  FILE *fileR = fopen(filename, "r");
 
-  if (file == NULL)
+  if (fileR == NULL)
   {
     printf("Erreur: %s\n", filename);
     exit(1);
   }
+  // voir si le fichier n'est pas vide pour le charger
+  fseek (fileR, 0, SEEK_END);
+  int size = ftell(fileR);
 
-  fscanf(file, "%d JO", nb_joueurs);
-  fscanf(file, "%d %d", &des[0], &des[1]);
+  if (size)
+  {
+    fscanf(fileR, "%d JO", nb_joueurs);
+    int nb_tours; //nb_tours = numéro de ligne-1 dans le fichier
+    char ch;
+    while ((ch = fgetc(fileR)) != EOF) {
+        if (ch == '\n') 
+            nb_tours++;
+    }
+    nb_tours--;
+    printf("Chargement de parties : %d joueurs, %d tours pour %d lancés de dés simulés", *nb_joueurs, nb_tours, (*nb_joueurs) * nb_tours -1);
 
-  fclose(file);
+    fscanf(fileR, "%d %d", &des[0], &des[1]);
+  }
+
+
+  fclose(fileR);
 }
 
 int main()
@@ -239,6 +236,22 @@ int main()
   creer_plateau(plateau);
   int nb_joueurs;
   int des[2];
+  // creation du fichier ma_sauvegarde.jo
+  FILE *fileW;
+  fileW = fopen("ma_sauvegarde.jo", "a");
+  if (fileW == NULL)
+  {
+    printf("Erreur: %s\n", "ma_sauvegarde_jo");
+    exit(1);
+  }
+
+  /*fseek (fileW, 0, SEEK_END);
+  int size = ftell(fileW);
+
+  if (size)
+  {
+    // charger_fichier() // fonctionalité pas terminé
+  } */
 
   printf("Combien de joueurs ? "); // nb_joueurs
   scanf("%d", &nb_joueurs);
@@ -247,8 +260,7 @@ int main()
     printf("Le nombre de joueurs est entre 2 et 4 ");
     scanf("%d", &nb_joueurs);
   }
-  printf("%d\n", nb_joueurs);
-
+  //afficherPlateau( plateau, positions,nb_joueurs);
   // intialisation des tab positions[] et attente[]
   int positions[nb_joueurs];
   int attente[nb_joueurs];
@@ -257,6 +269,8 @@ int main()
     positions[i] = 0;
     attente[i] = 0;
   }
+  
+  fprintf(fileW, "%d JO", nb_joueurs);
   printf("Pour chaque tour, indiquer les valeurs des deux des ou taper q pour quitter\n");
   // debut du jeu
   while (1)
@@ -266,30 +280,25 @@ int main()
     for (joueur_courant = 1; joueur_courant <= nb_joueurs; joueur_courant++)
     {
       printf("Joueur %d: ", joueur_courant);
-      char input;
-      int c;
-      while ((c = getchar()) != '\n' && c!= EOF){};
-      scanf("%c", &input);
-      if (input == 'q')
-      {
-        printf("Arrêt, partie sauvegardée dans ma_sauvegarde.jo\n");
-        save_game("ma_sauvegarde.jo", nb_joueurs, des);
-        exit(0); // on sort du programme
-      }
       scanf("%d %d", des, des + 1);
       while (des[0] < 1 || des[0] > 6 || des[1] < 1 || des[1] > 6)
       {
         printf("la valeur de des est entre 1 et 6 ");
-        scanf("%d", des);
+        scanf("%d %d", des, des + 1);
       }
-      
+      if (des[0] == -1)
+      {
+        printf("Arrêt, partie sauvegardée dans ma_sauvegarde.jo\n");
+        exit(0); // on sort du programme
+      }
       printf("%d %d\n", des[0], des[1]);
+      fprintf(fileW, "%d %d\n", des[0], des[1]);
       avancerJoueur(plateau, positions, attente, joueur_courant, nb_joueurs, des, premier_tour);
-      // afficherPlateau( plateau, positions, nb joueurs)
+      // afficherPlateau( plateau, positions, nb joueurs);
     }
 
     premier_tour = 0;
   }
-
+  fclose(fileW);
   return 0;
 }
