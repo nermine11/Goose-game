@@ -183,9 +183,14 @@ void conversion(int pos, int* x, int* y) {
   if(pos < 70){*x=pos-62;*y=2;pos=100;}
   if(pos < 75){*x=7;*y=pos-67;pos=100;}
   if(pos < 80){*x=81-pos;*y=7;pos=100;}
-  if(pos < 84){;}
-
-//je continueplus tard
+  if(pos < 84){*x=2;*y=86-pos;pos=100;}
+  if(pos < 88){*x=pos-81;*y=3;pos=100;}
+  if(pos  == 89){*x=6;*y=5;pos=100;}
+  if(pos < 94){*x=96-pos;*y=6;pos=100;}
+  if(pos == 94){*x=3;*y=5;pos=100;}
+  if(pos < 98){*x=pos-92;*y=4;pos=100;}
+  if(pos == 98){*x=5;*y=5;pos=100;}
+  if(pos == 99){*x=4;*y=5;}
 
 }
 
