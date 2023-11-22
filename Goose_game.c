@@ -119,34 +119,47 @@ void collision(char plateau[], int positions[], int attente[], int nb_joueurs,
       int joueur_deplace = i;
       positions[joueur_deplace - 1] = positions[joueur_courant - 1]; // on teste sur position(joueur_courant -1) car si j_courant est 1 sa position est pos[0]
       appliquer_effet_cases(plateau, positions, nb_joueurs, attente, joueur_courant, des, &nouvelle_pos);
-      // le joueur deplacé a les effets de la case apliqué
+      // le joueur deplacé a les effets de la case appliqué
     }
   }
 }
 
 int avancerJoueur(char plateau[], int positions[], int attente[], int joueur_courant, int nb_joueurs, int des[2], int premier_tour)
 {
-  if(attente[joueur_courant]){attente[joueur_courant]-=1;}
+  // cas de hotel
+  if(attente[joueur_courant - 1])
+    attente[joueur_courant]--;
+  
   if (!attente[joueur_courant - 1])
   {
     int nouvelle_pos = positions[joueur_courant - 1] + des[0] + des[1];
-    int cas_spes = 0;
+    int cas_special = 0;
     if (premier_tour){
-    {
-      if ((des[0] == 4 && des[1] == 5) || (des[1] == 4 && des[0] == 5)) // cas special 4,5
-        nouvelle_pos = 89;cas_spes=1;positions[joueur_courant - 1] = nouvelle_pos;}
-      if ((des[0] == 3 && des[1] == 6) || (des[1] == 3 && des[0] == 6)){ // cas special 3,6
-        nouvelle_pos = 40;cas_spes=1;positions[joueur_courant - 1] = nouvelle_pos;}
-      if(cas_spes){collision(plateau, positions, attente, nb_joueurs, joueur_courant, nouvelle_pos, des);}
+      // cas special 4,5
+      if ((des[0] == 4 && des[1] == 5) || (des[1] == 4 && des[0] == 5))
+      {
+        nouvelle_pos = 89;
+        cas_special = 1;
+        positions[joueur_courant - 1] = nouvelle_pos;
+      }
+      // cas special 3,6
+      if ((des[0] == 3 && des[1] == 6) || (des[1] == 3 && des[0] == 6))
+      { 
+        nouvelle_pos = 40;
+        cas_special = 1;
+        positions[joueur_courant - 1] = nouvelle_pos;
+      }
+      if(cas_special)
+        collision(plateau, positions, attente, nb_joueurs, joueur_courant, nouvelle_pos, des);
+        
     }
-    if(!cas_spes)
+
+    if(!cas_special) // quand pas de cas spécial pour le 1er tour
     {
       if (nouvelle_pos > 99) // si on depase 100
         nouvelle_pos = 99 - nouvelle_pos % 99;
       collision(plateau, positions, attente, nb_joueurs, joueur_courant, nouvelle_pos, des);
       appliquer_effet_cases(plateau, positions, nb_joueurs, attente, joueur_courant, des, &nouvelle_pos);
-
-      positions[joueur_courant - 1] = nouvelle_pos;
       positions[joueur_courant - 1] = nouvelle_pos;
       if (nouvelle_pos == 99)
       {
@@ -157,9 +170,15 @@ int avancerJoueur(char plateau[], int positions[], int attente[], int joueur_cou
         return -1;
       }
     }
-  }else{printf("le joueur attend son tour !\n");}
+    else
+    {
+     printf("le joueur attend son tour !\n"); // j'ai pas compris pour quel cas ca?
+    
+    }
+  }
   return -1;
 }
+
 
 void conversion(int pos, int* x, int* y) {
   if(pos < 10){*x = pos;*y=0;pos=100;}
@@ -221,7 +240,7 @@ void afficherPlateau(char plateau[], int positions[], int nb_joueurs,int joueur_
           }
         }
       }
-      if(joueur_aff!=1000){caze=joueur_aff+'0'+1;}//1000 est la valeur pour dire pas de joueur a afficher
+      if(joueur_aff!=1000){caze=joueur_aff+'0'+1;}//1000 est la valeur pour dire pas de joueur à afficher
       printf("%c ",caze);
     }printf("      ");
     for(int l=0;l<10;l++){
@@ -231,8 +250,8 @@ void afficherPlateau(char plateau[], int positions[], int nb_joueurs,int joueur_
     printf("\n");
   }printf("\n");
 
-  for(int k=0;k<nb_joueurs;k++){
-    printf("joueur%d: case %d\n",k+1,positions[k]);
+  for(int k = 0; k < nb_joueurs; k++){
+    printf("Joueur %d: case %d\n",k+1,positions[k]);
   }
 
   }
@@ -266,8 +285,6 @@ void charger_fichier(char *filename, int *nb_joueurs, int des[2])
 
     fscanf(fileR, "%d %d", &des[0], &des[1]);
   }
-
-
   fclose(fileR);
 }
 
@@ -276,7 +293,7 @@ int main()
 
   char plateau[TAILLE_PLAT];
   creer_plateau(plateau);
-  int nb_joueurs = 2;
+  int nb_joueurs;
   int des[2];
   // creation du fichier ma_sauvegarde.jo
   FILE *fileW;
@@ -295,7 +312,7 @@ int main()
     // charger_fichier() // fonctionalité pas terminé
   } */
 
-  printf("Combien de joueurs ?"); // nb_joueurs
+  printf("Combien de joueurs ? "); // nb_joueurs
   scanf("%d", &nb_joueurs);
   while (nb_joueurs < 2 || nb_joueurs > 4)
   {
@@ -304,12 +321,11 @@ int main()
   }
   //afficherPlateau( plateau, positions,nb_joueurs);
   // intialisation des tab positions[] et attente[]
-  int positions[4] = {};    // on met 4 pour ne pas initialisé par une variable et de toute fason le max possible est 4
-  int attente[4] = {};       //les listes sont initalisé a 0
+  int positions[4] = {};    // on met 4 pour ne pas initialiser par une variable avec max possible est 4
+  int attente[4] = {};       // attente est initialisé à 0
   
   fprintf(fileW, "%d JO", nb_joueurs);
   printf("Pour chaque tour, indiquer les valeurs des deux des ou taper q pour quitter\n");
-
 
 
 
