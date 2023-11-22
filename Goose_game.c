@@ -195,10 +195,57 @@ void conversion(int pos, int* x, int* y) {
 }
 
 
-void afficherPlateau(int plateau[], int positions[], int nb_joueurs)
-{
-  ;
+
+int joueur_qui_minimise(int j1,int j2,int joueur_courant,int nb_joueur){
+  //pour savoir quel joueur est prioritaire a l'affichage si meme case (0 si j1, 1 si j2)
+  if(j1==1000){return 1;}
+  if((j1-joueur_courant)%nb_joueur < (j2-joueur_courant)%nb_joueur)
+  {return 0;}
+  else{return 1;}
 }
+
+void afficherPlateau(char plateau[], int positions[], int nb_joueurs,int joueur_courant){//doit ajouter joueur courant pour savoir lequel afficher
+  int temp[10][10] = {
+    {0,1,2,3,4,5,6,7,8,9},
+    {35,36,37,38,39,40,41,42,43,10},
+    {34,63,64,65,66,67,68,69,44,11},
+    {33,62,83,84,85,86,87,70,45,12},
+    {32,61,82,95,96,97,88,71,46,13},
+    {31,60,81,94,99,98,89,72,47,14},
+    {30,59,80,93,92,91,90,73,48,15},
+    {29,58,79,78,77,76,75,74,49,16},
+    {28,57,56,55,54,53,52,51,51,17},
+    {27,26,25,24,23,22,21,20,19,18}};
+  int joueur_aff;
+  for(int i=0;i<10;i++){
+    for(int j=0;j<10;j++){
+      joueur_aff = 1000;
+      char caze = plateau[temp[i][j]];
+      if(caze==' '){caze='_';}
+      //ici pour trouver si un joueur et sur la case et afficher
+      //int joueura_affic; for i in nbjoueur: if(position[nbjoueur]==temp[i][j]{   if joueur_qui_min() {joueurach = j2}else j1   })
+      for(int y=0;y<nb_joueurs;y++){
+        if(positions[y]==temp[i][j]){
+          if(joueur_qui_minimise(joueur_aff,y,joueur_courant,nb_joueurs)){
+              joueur_aff = y;
+          }
+        }
+      }
+      if(joueur_aff!=1000){caze=joueur_aff+'0'+1;}//1000 est la valeur pour dire pas de joueur a afficher
+      printf("%c ",caze);
+    }printf("      ");
+    for(int l=0;l<10;l++){
+      if(temp[i][l]<10){printf(" ");}
+      printf("%d ",temp[i][l]);
+    }
+    printf("\n");
+  }printf("\n");
+
+  for(int k=0;k<nb_joueurs;k++){
+    printf("joueur%d: case %d\n",k+1,positions[k]);
+  }
+
+  }
 
 
 // Fonction pour charger le jeu
