@@ -23,9 +23,8 @@ void creer_plateau(char plateau[TAILLE_PLAT])
 }
 
 int recherche_element(int valeur, int tab[])
+// on recherche si i un element est dans un tableau et on retourne son indice ou 0
 {
-
-  // on recherche is un element est dans un tableau et on retourne l'indice ou 0
   for (int i = 0; i < TAILLE_PLAT; i++)
   {
     if (valeur == tab[i])
@@ -36,6 +35,7 @@ int recherche_element(int valeur, int tab[])
 
 void collision(char plateau[], int positions[], int attente[], int nb_joueurs,
                int joueur_courant, int nouvelle_pos, int des[2])
+// on teste la collision entre les joueurs
 {
   /* la fonction prend positions,attente qui n'a pas encore changé et
    ne change pas la position de joueur courant a nouvelle_pos */
@@ -60,6 +60,7 @@ void collision(char plateau[], int positions[], int attente[], int nb_joueurs,
 }
 
 void appliquer_effet_cases(char plateau[], int positions[], int nb_joueurs, int attente[], int joueur_courant, int des[2], int *nouvelle_pos)
+// on applique les effets des cases speciales
 {
   char cas = plateau[*nouvelle_pos];
 
@@ -124,7 +125,7 @@ int avancerJoueur(char plateau[], int positions[], int attente[], int joueur_cou
 {
   // cas de hotel
   if(attente[joueur_courant - 1])
-    attente[joueur_courant]--;
+    attente[joueur_courant - 1]--;
   
   if (!attente[joueur_courant - 1])
   {
@@ -171,13 +172,13 @@ int avancerJoueur(char plateau[], int positions[], int attente[], int joueur_cou
     }
   }else
     {
-     printf("le joueur attend son tour !\n"); // j'ai pas compris pour quel cas ca?
+     printf("le joueur attend son tour !\n"); 
     
     }
   return -1;
 }
 
-
+//Affichage
 void conversion(int pos, int* x, int* y) {
   if(pos < 10){*x = pos;*y=0;pos=100;}
   if(pos < 19){*x=9;*y=pos-9;pos=100;}
@@ -257,8 +258,9 @@ void afficherPlateau(char plateau[], int positions[], int nb_joueurs,int joueur_
   }
 
 
-// Fonction pour charger le jeu
+
 void charger_fichier(char *filename, int *nb_joueurs, int des[2])
+// Fonction pour charger le jeu
 {
   FILE *fileR = fopen(filename, "r");
 
@@ -274,7 +276,7 @@ void charger_fichier(char *filename, int *nb_joueurs, int des[2])
   if (size)
   {
     fscanf(fileR, "%d JO", nb_joueurs);
-    int nb_tours; //nb_tours = numéro de ligne-1 dans le fichier
+    int nb_tours = 0; //nb_tours = numéro de ligne-1 dans le fichier
     char ch;
     while ((ch = fgetc(fileR)) != EOF) {
         if (ch == '\n') 
@@ -288,9 +290,11 @@ void charger_fichier(char *filename, int *nb_joueurs, int des[2])
   fclose(fileR);
 }
 
-int main()
-{
 
+
+
+
+int main(){
   char plateau[TAILLE_PLAT];
   creer_plateau(plateau);
   int nb_joueurs;
@@ -340,7 +344,7 @@ int main()
       printf("Joueur %d: ", joueur_courant);
       scanf("%d", des);
 
-      if (des[0] == -1) // on quitte quand le joueur tappe -1 pour des[0] pas q (input buffer erreur engendrée par q)
+      if (des[0] == -1) // on quitte quand le joueur tappe -1 pas q (input buffer erreur engendrée par q)
       {
         printf("Arrêt, partie sauvegardée dans ma_sauvegarde.jo\n");
         exit(0); // on sort du programme
@@ -362,5 +366,3 @@ int main()
   fclose(fileW);
   return 0;
 }
-// le O a la fin
-//bug sur appliquer effet case (quand hotel on demande toujour dés)
