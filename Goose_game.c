@@ -337,7 +337,7 @@ int main()
     for (joueur_courant = 1; joueur_courant <= nb_joueurs; joueur_courant++)
     {
       printf("Joueur %d: ", joueur_courant);
-      scanf("%d %d", des, des + 1);
+      scanf("%d", des);
 
       if (des[0] == -1) // on quitte quand le joueur tappe -1 pour des[0] pas q (input buffer erreur engendrée par q) et une autre valeur pour d[1] 
       {
@@ -345,10 +345,10 @@ int main()
         exit(0); // on sort du programme
       }
 
-      //scanf("%d %d", des, des + 1);
+      scanf("%d", des + 1);
       while (des[0] < 1 || des[0] > 6 || des[1] < 1 || des[1] > 6)
       {
-        printf("la valeur de des est entre 1 et 6 ");
+        printf("la valeur du des est entre 1 et 6: ");
         scanf("%d %d", des, des + 1);
       }
       printf("%d %d\n", des[0], des[1]);
