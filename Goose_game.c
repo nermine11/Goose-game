@@ -34,9 +34,30 @@ int recherche_element(int valeur, int tab[])
   return 0;
 }
 
-// declaration de collision pour l'utiliser dans appliquer_effet_cases
 void collision(char plateau[], int positions[], int attente[], int nb_joueurs,
-               int joueur_courant, int nouvelle_pos, int des[2]);
+               int joueur_courant, int nouvelle_pos, int des[2])
+{
+  /* la fonction prend positions,attente qui n'a pas encore changé et
+   ne change pas la position de joueur courant a nouvelle_pos */
+
+  if (plateau[nouvelle_pos] != 'P' && plateau[nouvelle_pos] != 'T')
+  { int joueur_deplace;
+    // si la case n'est pas trou ou prison
+    int i = 0;
+    while (i < nb_joueurs)
+    {
+      if (nouvelle_pos == positions[i])
+      {
+        joueur_deplace = i;
+        positions[joueur_deplace] = positions[joueur_courant-1];
+        // on teste sur position(joueur_courant -1) car si j_courant est 1 sa position est pos[0]
+        break;
+      }
+
+      i++;
+    }
+  }
+}
 
 void appliquer_effet_cases(char plateau[], int positions[], int nb_joueurs, int attente[], int joueur_courant, int des[2], int *nouvelle_pos)
 {
@@ -46,25 +67,30 @@ void appliquer_effet_cases(char plateau[], int positions[], int nb_joueurs, int 
   {
   case 'O':
     *nouvelle_pos += des[0] + des[1];
+    printf("Le joueur atterie sur une case oie !\n");
     collision(plateau, positions, attente, nb_joueurs, joueur_courant, *nouvelle_pos, des);
     break;
 
   case 'H':
+    printf("Le joueur atterie sur un hotel !\n");
     attente[joueur_courant - 1] = 2;
     break;
 
   case 'L':
+    printf("Le joueur ce perd dans le labyrinte !\n");
     *nouvelle_pos = 52;
     collision(plateau, positions, attente, nb_joueurs, joueur_courant, *nouvelle_pos, des);
     break;
 
   case 'X':
     *nouvelle_pos = 0;
+    printf("Le joueur tombe dans le trou !\n");
     collision(plateau, positions, attente, nb_joueurs, joueur_courant, *nouvelle_pos, des);
     break;
 
   case 'R':
     *nouvelle_pos = 16;
+    printf("Le joueur prend le racourci !\n");
     collision(plateau, positions, attente, nb_joueurs, joueur_courant, *nouvelle_pos, des);
     break;
 
@@ -93,36 +119,6 @@ void appliquer_effet_cases(char plateau[], int positions[], int nb_joueurs, int 
   }
 }
 
-void collision(char plateau[], int positions[], int attente[], int nb_joueurs,
-               int joueur_courant, int nouvelle_pos, int des[2])
-{
-  /* la fonction prend positions,attente qui n'a pas encore changé et
-   ne change pas la position de joueur courant a nouvelle_pos */
-
-  if (plateau[nouvelle_pos] != 'P' && plateau[nouvelle_pos] != 'T')
-  {
-    // si la case n'est pas trou ou prison
-    int i = 0;
-    while (i < nb_joueurs)
-    {
-      if (nouvelle_pos == positions[i])
-      {
-        i--;
-        break;
-      }
-
-      i++;
-    }
-    if (i < nb_joueurs)
-    {
-      // vrai si il y a eu une colision et i est le joueur sur lequel on a atterit
-      int joueur_deplace = i;
-      positions[joueur_deplace - 1] = positions[joueur_courant - 1]; // on teste sur position(joueur_courant -1) car si j_courant est 1 sa position est pos[0]
-      appliquer_effet_cases(plateau, positions, nb_joueurs, attente, joueur_courant, des, &nouvelle_pos);
-      // le joueur deplacé a les effets de la case appliqué
-    }
-  }
-}
 
 int avancerJoueur(char plateau[], int positions[], int attente[], int joueur_courant, int nb_joueurs, int des[2], int premier_tour)
 {
@@ -140,25 +136,28 @@ int avancerJoueur(char plateau[], int positions[], int attente[], int joueur_cou
       {
         nouvelle_pos = 89;
         cas_special = 1;
+        collision(plateau, positions, attente, nb_joueurs, joueur_courant, nouvelle_pos, des);
+        positions[joueur_courant - 1] = nouvelle_pos;
+        appliquer_effet_cases(plateau, positions, nb_joueurs, attente, joueur_courant, des, &nouvelle_pos);
         positions[joueur_courant - 1] = nouvelle_pos;
       }
       // cas special 3,6
       if ((des[0] == 3 && des[1] == 6) || (des[1] == 3 && des[0] == 6))
       { 
         nouvelle_pos = 40;
+        collision(plateau, positions, attente, nb_joueurs, joueur_courant, nouvelle_pos, des);
         cas_special = 1;
         positions[joueur_courant - 1] = nouvelle_pos;
+        appliquer_effet_cases(plateau, positions, nb_joueurs, attente, joueur_courant, des, &nouvelle_pos);
+        positions[joueur_courant - 1] = nouvelle_pos;
       }
-      if(cas_special)
-        collision(plateau, positions, attente, nb_joueurs, joueur_courant, nouvelle_pos, des);
-        
     }
-
     if(!cas_special) // quand pas de cas spécial pour le 1er tour
     {
       if (nouvelle_pos > 99) // si on depase 100
         nouvelle_pos = 99 - nouvelle_pos % 99;
       collision(plateau, positions, attente, nb_joueurs, joueur_courant, nouvelle_pos, des);
+      positions[joueur_courant - 1] = nouvelle_pos;
       appliquer_effet_cases(plateau, positions, nb_joueurs, attente, joueur_courant, des, &nouvelle_pos);
       positions[joueur_courant - 1] = nouvelle_pos;
       if (nouvelle_pos == 99)
@@ -170,12 +169,11 @@ int avancerJoueur(char plateau[], int positions[], int attente[], int joueur_cou
         return -1;
       }
     }
-    else
+  }else
     {
      printf("le joueur attend son tour !\n"); // j'ai pas compris pour quel cas ca?
     
     }
-  }
   return -1;
 }
 
@@ -253,6 +251,8 @@ void afficherPlateau(char plateau[], int positions[], int nb_joueurs,int joueur_
   for(int k = 0; k < nb_joueurs; k++){
     printf("Joueur %d: case %d\n",k+1,positions[k]);
   }
+  printf("\n");
+  printf("\n");
 
   }
 
@@ -331,9 +331,10 @@ int main()
 
   // debut du jeu
   int premier_tour = 1;
+  int joueur_courant;
   while (1)
   {
-    int joueur_courant;
+    joueur_courant=1;
     for (joueur_courant = 1; joueur_courant <= nb_joueurs; joueur_courant++)
     {
       printf("Joueur %d: ", joueur_courant);
@@ -351,7 +352,6 @@ int main()
         printf("la valeur du des est entre 1 et 6: ");
         scanf("%d %d", des, des + 1);
       }
-      printf("%d %d\n", des[0], des[1]);
       fprintf(fileW, "%d %d\n", des[0], des[1]);
       avancerJoueur(plateau, positions, attente, joueur_courant, nb_joueurs, des, premier_tour);
       afficherPlateau( plateau, positions, nb_joueurs,joueur_courant);
@@ -363,5 +363,4 @@ int main()
   return 0;
 }
 // le O a la fin
-//pb colision
-//pb position depase 100
+//bug sur appliquer effet case (quand hotel on demande toujour dés)
