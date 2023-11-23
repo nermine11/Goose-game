@@ -22,20 +22,20 @@ void creer_plateau(char plateau[TAILLE_PLAT])
   plateau[99] = ' ';
 }
 
-int recherche_element(int valeur, int tab[])
-// on recherche si i un element est dans un tableau et on retourne son indice ou 0
+int recherche_element(int valeur, int tab[],int indice_ignore)
 {
+
+// on recherche si i un element est dans un tableau et on retourne son indice ou -1
   for (int i = 0; i < TAILLE_PLAT; i++)
   {
-    if (valeur == tab[i])
+    if (valeur == tab[i] && i != indice_ignore)//cette fonction est lancée seulement quand on cherche un autre joueur dans le trou donc on doit ignoré le joueur original dans le trou
       return i;
   }
-  return 0;
+  return -1;
 }
 
 void collision(char plateau[], int positions[], int attente[], int nb_joueurs,
-               int joueur_courant, int nouvelle_pos, int des[2])
-// on teste la collision entre les joueurs
+               int joueur_courant, int nouvelle_pos, int des[2])// on teste la collision entre les joueurs
 {
   /* la fonction prend positions,attente qui n'a pas encore changé et
    ne change pas la position de joueur courant a nouvelle_pos */
@@ -60,7 +60,6 @@ void collision(char plateau[], int positions[], int attente[], int nb_joueurs,
 }
 
 void appliquer_effet_cases(char plateau[], int positions[], int nb_joueurs, int attente[], int joueur_courant, int des[2], int *nouvelle_pos)
-// on applique les effets des cases speciales
 {
   char cas = plateau[*nouvelle_pos];
 
@@ -74,7 +73,7 @@ void appliquer_effet_cases(char plateau[], int positions[], int nb_joueurs, int 
 
   case 'H':
     printf("Le joueur atterie sur un hotel !\n");
-    attente[joueur_courant - 1] = 2;
+    attente[joueur_courant] = 2;
     break;
 
   case 'L':
@@ -94,39 +93,33 @@ void appliquer_effet_cases(char plateau[], int positions[], int nb_joueurs, int 
     printf("Le joueur prend le racourci !\n");
     collision(plateau, positions, attente, nb_joueurs, joueur_courant, *nouvelle_pos, des);
     break;
-
-  default:
-    break;
-  }
-
-  // cas de prison
-  if (cas == 'P')
-  {
-    if (recherche_element(74, positions))
-    {
-      attente[recherche_element(74, positions)] = 0;
+  
+  case 'T':
+    attente[joueur_courant] = -1;printf("le joueur tombe dans le trou!\n");
+    if (recherche_element(53, positions,joueur_courant)){
+      attente[joueur_courant] = 0;} // si un autre joueur est dans le trou, il sort
+  
+  case 'P':
+    printf("le joueur est en prison !!\n");
+  if (recherche_element(74, positions,joueur_courant))
+      {printf("les joueur en prison ce sont echapé !!\n");
+      attente[recherche_element(74, positions,joueur_courant)] = 0;  attente[joueur_courant] = 0;
     }
     else
     {
-      attente[joueur_courant - 1] = -1;
+      attente[joueur_courant] = -1;
     }
-  }
-  // cas de trou
-  if (cas == 'T')
-  {
-    attente[joueur_courant - 1] = -1;
-    if (recherche_element(53, positions))
-      attente[recherche_element(53, positions)] = 0; // si un autre joueur est dans le trou, il sort
+    
+
+
+  default:
+    break;
   }
 }
 
 
 int avancerJoueur(char plateau[], int positions[], int attente[], int joueur_courant, int nb_joueurs, int des[2], int premier_tour)
 {
-  // cas de hotel
-  if(attente[joueur_courant - 1])
-    attente[joueur_courant - 1]--;
-  
   if (!attente[joueur_courant - 1])
   {
     int nouvelle_pos = positions[joueur_courant - 1] + des[0] + des[1];
@@ -161,47 +154,14 @@ int avancerJoueur(char plateau[], int positions[], int attente[], int joueur_cou
       positions[joueur_courant - 1] = nouvelle_pos;
       appliquer_effet_cases(plateau, positions, nb_joueurs, attente, joueur_courant, des, &nouvelle_pos);
       positions[joueur_courant - 1] = nouvelle_pos;
-      if (nouvelle_pos == 99)
-      {
-        return joueur_courant;
-      }
-      else
-      {
-        return -1;
-      }
     }
   }else
     {
-     printf("le joueur attend son tour !\n"); 
+     //printf("le joueur attend son tour !\n");
     
-    }
+    }if(positions[joueur_courant]==99){return joueur_courant;}
   return -1;
 }
-
-//Affichage
-void conversion(int pos, int* x, int* y) {
-  if(pos < 10){*x = pos;*y=0;pos=100;}
-  if(pos < 19){*x=9;*y=pos-9;pos=100;}
-  if(pos < 28){*x=27-pos;*y=9;pos=100;}
-  if(pos < 36){*x=0;*y=36-pos;pos=100;}
-  if(pos < 44){*x=pos-35;*y=1;pos=100;}
-  if(pos < 51){*x=8;*y=pos-42;pos=100;}
-  if(pos < 58){*x=58-pos;*y=8;pos=100;}
-  if(pos < 64){*x=1;*y=65-pos;pos=100;}
-  if(pos < 70){*x=pos-62;*y=2;pos=100;}
-  if(pos < 75){*x=7;*y=pos-67;pos=100;}
-  if(pos < 80){*x=81-pos;*y=7;pos=100;}
-  if(pos < 84){*x=2;*y=86-pos;pos=100;}
-  if(pos < 88){*x=pos-81;*y=3;pos=100;}
-  if(pos  == 89){*x=6;*y=5;pos=100;}
-  if(pos < 94){*x=96-pos;*y=6;pos=100;}
-  if(pos == 94){*x=3;*y=5;pos=100;}
-  if(pos < 98){*x=pos-92;*y=4;pos=100;}
-  if(pos == 98){*x=5;*y=5;pos=100;}
-  if(pos == 99){*x=4;*y=5;}
-
-}
-
 
 
 int joueur_qui_minimise(int j1,int j2,int joueur_courant,int nb_joueur){
@@ -252,15 +212,12 @@ void afficherPlateau(char plateau[], int positions[], int nb_joueurs,int joueur_
   for(int k = 0; k < nb_joueurs; k++){
     printf("Joueur %d: case %d\n",k+1,positions[k]);
   }
-  printf("\n");
-  printf("\n");
-
+  printf("\n\n\n");
   }
 
 
-
-void charger_fichier(char *filename, int *nb_joueurs, int des[2])
 // Fonction pour charger le jeu
+void charger_fichier(char *filename, int *nb_joueurs, int des[2])
 {
   FILE *fileR = fopen(filename, "r");
 
@@ -276,7 +233,7 @@ void charger_fichier(char *filename, int *nb_joueurs, int des[2])
   if (size)
   {
     fscanf(fileR, "%d JO", nb_joueurs);
-    int nb_tours = 0; //nb_tours = numéro de ligne-1 dans le fichier
+    int nb_tours=0; //nb_tours = numéro de ligne-1 dans le fichier
     char ch;
     while ((ch = fgetc(fileR)) != EOF) {
         if (ch == '\n') 
@@ -290,11 +247,9 @@ void charger_fichier(char *filename, int *nb_joueurs, int des[2])
   fclose(fileR);
 }
 
+int main()
+{
 
-
-
-
-int main(){
   char plateau[TAILLE_PLAT];
   creer_plateau(plateau);
   int nb_joueurs;
@@ -335,16 +290,17 @@ int main(){
 
   // debut du jeu
   int premier_tour = 1;
-  int joueur_courant;
-  while (1)
+  int joueur_courant=1;
+  int gagnan=-1;
+  while (gagnan==-1)
   {
     joueur_courant=1;
     for (joueur_courant = 1; joueur_courant <= nb_joueurs; joueur_courant++)
-    {
-      printf("Joueur %d: ", joueur_courant);
+    { if(!attente[joueur_courant]){printf("\n\n%d\n\n",attente[joueur_courant]);
+      printf("lancé de dés du joueur %d: ", joueur_courant);
       scanf("%d", des);
 
-      if (des[0] == -1) // on quitte quand le joueur tappe -1 pas q (input buffer erreur engendrée par q)
+      if (des[0] == -1) // on quitte quand le joueur tappe -1 pour pas q (input buffer erreur engendrée par q)
       {
         printf("Arrêt, partie sauvegardée dans ma_sauvegarde.jo\n");
         exit(0); // on sort du programme
@@ -357,12 +313,12 @@ int main(){
         scanf("%d %d", des, des + 1);
       }
       fprintf(fileW, "%d %d\n", des[0], des[1]);
-      avancerJoueur(plateau, positions, attente, joueur_courant, nb_joueurs, des, premier_tour);
+      gagnan = avancerJoueur(plateau, positions, attente, joueur_courant, nb_joueurs, des, premier_tour);
       afficherPlateau( plateau, positions, nb_joueurs,joueur_courant);
-    }
+    }else{printf("\njoueur %d passe sont tour",joueur_courant);attente[joueur_courant]--;}}
 
     premier_tour = 0;
-  }
+  }printf("\nLe joueur %d gnagne la partie !!! \n",gagnan);
   fclose(fileW);
   return 0;
 }
