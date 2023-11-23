@@ -339,7 +339,7 @@ int main()
       printf("Joueur %d: ", joueur_courant);
       scanf("%d", des);
 
-      if (des[0] == -1) // on quitte quand le joueur tappe -1 pour des[0] pas q (input buffer erreur engendrée par q) et une autre valeur pour d[1] 
+      if (des[0] == -1) // on quitte quand le joueur tappe -1 pour des[0] pas q (input buffer erreur engendrée par q)
       {
         printf("Arrêt, partie sauvegardée dans ma_sauvegarde.jo\n");
         exit(0); // on sort du programme
