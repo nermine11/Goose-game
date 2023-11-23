@@ -1,3 +1,6 @@
+//ELKILANI NARMIN
+//PETROV MECHAEL
+
 #include <stdio.h>
 #include <stdlib.h>
 #define TAILLE_PLAT 100
@@ -290,35 +293,43 @@ int main()
 
   // debut du jeu
   int premier_tour = 1;
-  int joueur_courant=1;
-  int gagnan=-1;
-  while (gagnan==-1)
+  int joueur_courant = 1;
+  int gagnant = -1;
+  while (gagnant == -1)
   {
-    joueur_courant=1;
+    joueur_courant = 1;
     for (joueur_courant = 1; joueur_courant <= nb_joueurs; joueur_courant++)
-    { if(!attente[joueur_courant]){
-      printf("lancé de dés du joueur %d: ", joueur_courant);
-      scanf("%d", des);
-
-      if (des[0] == -1) // on quitte quand le joueur tappe -1 pour pas q (input buffer erreur engendrée par q)
+    { 
+      if(!attente[joueur_courant])
       {
-        printf("Arrêt, partie sauvegardée dans ma_sauvegarde.jo\n");
-        exit(0); // on sort du programme
-      }
+        printf("lancé de dés du joueur %d: ", joueur_courant);
+        scanf("%d", des);
 
-      scanf("%d", des + 1);
-      while (des[0] < 1 || des[0] > 6 || des[1] < 1 || des[1] > 6)
+        if (des[0] == -1) // on quitte quand le joueur tappe -1 pour pas q (input buffer erreur engendrée par q)
+        {
+          printf("Arrêt, partie sauvegardée dans ma_sauvegarde.jo\n");
+          exit(0); // on sort du programme
+        }
+
+        scanf("%d", des + 1);
+        while (des[0] < 1 || des[0] > 6 || des[1] < 1 || des[1] > 6)
+        {
+          printf("la valeur du des est entre 1 et 6: ");
+          scanf("%d %d", des, des + 1);
+        }
+        fprintf(fileW, "%d %d\n", des[0], des[1]);
+        gagnant = avancerJoueur(plateau, positions, attente, joueur_courant, nb_joueurs, des, premier_tour);
+        afficherPlateau( plateau, positions, nb_joueurs,joueur_courant);
+    }
+      else
       {
-        printf("la valeur du des est entre 1 et 6: ");
-        scanf("%d %d", des, des + 1);
+        printf("\njoueur %d passe sont tour",joueur_courant);attente[joueur_courant]--;
       }
-      fprintf(fileW, "%d %d\n", des[0], des[1]);
-      gagnan = avancerJoueur(plateau, positions, attente, joueur_courant, nb_joueurs, des, premier_tour);
-      afficherPlateau( plateau, positions, nb_joueurs,joueur_courant);
-    }else{printf("\njoueur %d passe sont tour",joueur_courant);attente[joueur_courant]--;}}
+    }
 
     premier_tour = 0;
-  }printf("\nLe joueur %d gnagne la partie !!! \n",gagnan);
+  }
+  printf("\nLe joueur %d gagne la partie !!! \n",gagnant);
   fclose(fileW);
   return 0;
 }
