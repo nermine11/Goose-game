@@ -1,9 +1,13 @@
 //ELKILANI NARMIN
 //PETROV MECHAEL
 
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #define TAILLE_PLAT 100
+
+
 
 void creer_plateau(char plateau[TAILLE_PLAT])
 { // pour creer le plateau au debut de la partie
@@ -162,7 +166,7 @@ int avancerJoueur(char plateau[], int positions[], int attente[], int joueur_cou
     {
      //printf("le joueur attend son tour !\n");
     
-    }if(positions[joueur_courant]==99){return joueur_courant;}
+    }if(positions[joueur_courant-1]==99){printf("%d\n\n\n",joueur_courant); return joueur_courant;}
   return -1;
 }
 
