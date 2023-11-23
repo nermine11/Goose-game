@@ -296,7 +296,7 @@ int main()
   {
     joueur_courant=1;
     for (joueur_courant = 1; joueur_courant <= nb_joueurs; joueur_courant++)
-    { if(!attente[joueur_courant]){printf("\n\n%d\n\n",attente[joueur_courant]);
+    { if(!attente[joueur_courant]){
       printf("lancé de dés du joueur %d: ", joueur_courant);
       scanf("%d", des);
 
