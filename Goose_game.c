@@ -318,7 +318,7 @@ int main()
           scanf("%d %d", des, des + 1);
         }
         fprintf(fileW, "%d %d\n", des[0], des[1]);
-        gagnant = avancerJoueur(plateau, positions, attente, joueur_courant, nb_joueurs, des, premier_tour);
+        gagnant = avancerJoueur(plateau, positions, attente, joueur_courant, nb_joueurs, des, premier_tour);if(gagnant!=-1)break;
         afficherPlateau( plateau, positions, nb_joueurs,joueur_courant);
     }
       else
